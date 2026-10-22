@@ -3,13 +3,14 @@
 ဒီဖိုင်က `~/workspace/projects/` အောက်ရှိ project **အကုန်လုံး** အတွက် သက်ဝင်တယ်။
 Project သီးသန့်အချက်တွေကို သူ့ repo ရဲ့ `CLAUDE.md` မှာ ရေးပါ — ဒီဖိုင်မှာ မထည့်ပါနဲ့။
 
-## Layering (ဒီ ၃ ခု ပေါင်းပြီး load ဖြစ်တယ်)
+## Layering (Claude က cwd ကနေ အပေါ်ဆီ တက်ဖတ်ပြီး ပေါင်း load တယ်)
 
 | လွှာ | ဖိုင် | အကြောင်းအရာ |
 |---|---|---|
 | Global | `~/.claude/CLAUDE.md` | ကိုယ်ရေး၊ ဘာသာစကား၊ reply style |
-| Fleet | `~/workspace/CLAUDE.md` (ဒီဖိုင်) | stack default, convention, တားမြစ်ချက် |
-| Project | `projects/<name>/CLAUDE.md` | stack အတိအကျ၊ DB၊ command၊ module |
+| Fleet | `~/workspace/CLAUDE.md` (ဒီဖိုင်) | stack default, naming, convention, တားမြစ်ချက် |
+| Product | `projects/<product>/CLAUDE.md` + `PRODUCT.md` | repo map, boundary, API contract (repo အများကြီးပါရင်ပဲ) |
+| Repo | `projects/.../<repo>/CLAUDE.md` | ဒီ repo ရဲ့ stack, DB, command, module |
 
 တူတဲ့အချက်ကို ၂ နေရာ မရေးပါနဲ့။ Project ဖိုင်မှာ **ဒီ default နဲ့ ကွဲတဲ့အချက်ပဲ** ရေးပါ။
 
@@ -47,6 +48,63 @@ Project သီးသန့်အချက်တွေကို သူ့ repo �
 2. အကြီးစား feature ဖြစ်ရင် `/laravel-feature`, bug ဖြစ်ရင် `/laravel-fix` သုံးပါ။
 3. ပြင်ပြီးရင် `./vendor/bin/pint --dirty` + `composer test` run ပါ။
 4. Test ကျရင် ဖုံးမထားပါနဲ့ — output အတိုင်း ပြောပြပါ။
+
+## Naming — repo နဲ့ folder
+
+### ပုံစံ
+
+```
+<product>-<role>          ဥပမာ:  pos-api   pos-gateway   pos-web
+```
+
+- **lowercase + hyphen ပဲ**။ `_` မသုံးရ၊ CamelCase မသုံးရ၊ space ဘယ်တော့မှ မပါရ။
+- Folder နာမည် = repo နာမည် = `.test` host = package name — ၄ ခု **အတိအကျတူရမယ်**။ ဒါဆို path ကို မှန်းလို့ရတယ်။
+- Version/အသစ်အရွေး နာမည်မှာ မထည့်ရ — `-new`, `-v2`, `-old`, `V3` မသုံးရ (branch/tag နဲ့ ဖြေရှင်းပါ)။ ၆ လကြာရင် `-new` က နာမည်လွဲဖြစ်တယ်။
+- Environment နာမည်မှာ မထည့်ရ — `-staging`, `-prod` မသုံးရ။
+- Role မပါတဲ့ နာမည် မပေးရ — `temp`, `php`, `frontend`, `ai`, `package` လိုမျိုး။
+
+### Role အမည် (ဒီစကားလုံးတွေပဲ သုံးပါ)
+
+| Suffix | ဘာလဲ |
+|---|---|
+| `-api` | Backend HTTP API (business logic + DB ပိုင်ရှင်) |
+| `-gateway` | Edge / middleware — auth, routing, rate limit, proxy |
+| `-web` | Browser frontend (Nuxt / Blade SPA) |
+| `-app` | Mobile (Flutter) |
+| `-worker` | Queue / scheduled job သီးသန့် |
+| `-admin` | Admin panel သီးသန့် repo ဖြစ်ရင် |
+| `-schema` | DB schema / migration သီးသန့် |
+| `-contracts` | OpenAPI, shared type, proto |
+| `-infra` | Deploy, Docker, IaC |
+| `-mcp` | MCP server |
+
+### Repo အများကြီးပါတဲ့ product
+
+```
+projects/
+├── pos/                   ← product root (git repo မဟုတ်ဘူး)
+│   ├── PRODUCT.md         ★ repo map + boundary + API contract
+│   ├── CLAUDE.md          ★ pos-* အကုန်အတွက် convention
+│   ├── docs/
+│   ├── pos-api/           (git repo)
+│   ├── pos-gateway/       (git repo)
+│   └── pos-web/           (git repo)
+└── standalone-tool/       ← repo တစ်ခုတည်းဆိုရင် product folder မလိုဘူး
+```
+
+- Repo နဲ့ repo **nest မလုပ်ရ** — product root က git repo မဖြစ်ရဘူး (`*/` ကို gitignore ထားတယ်)။
+- Product root ကနေ `claude` run ရင် repo အကုန် တစ်ခါတည်း မြင်တယ် — cross-repo အလုပ်အတွက် ဒီနည်းကို သုံးပါ။
+- Repo တစ်ခုတည်းကနေ sibling ကို relative path နဲ့ ဖတ်လို့ရတယ် — `../pos-api/app/Http/Resources/`။
+
+### Monorepo လုပ်သင့်တဲ့အခါ
+
+အောက်က ၃ ချက် **အကုန်မှန်ရင်** repo ခွဲမထားဘဲ monorepo (`apps/api`, `apps/web`) က AI အတွက် ပိုလွယ်တယ် — commit တစ်ခုတည်းနဲ့ ပြီးတယ်၊ session တစ်ခုတည်းနဲ့ မြင်တယ်:
+
+1. အမြဲ အတူတူ deploy တယ်
+2. repo အကုန် ကိုယ်တိုင်ပိုင်တယ် (တခြားအဖွဲ့ မသုံးဘူး)
+3. release cycle တူတယ်
+
+တစ်ချက်မှားရင် repo ခွဲထားတာ မှန်တယ်။
 
 ## Docs
 

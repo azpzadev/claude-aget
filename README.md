@@ -10,21 +10,40 @@ AI-assisted development အတွက် workspace root။ Repo အသစ်တ�
 ├── .claude/
 │   ├── settings.json    permission allowlist + Pint hook
 │   └── commands/        /project-setup
-├── templates/project/   repo အသစ်အတွက် scaffold
+├── templates/
+│   ├── product/         repo အများကြီးပါတဲ့ product အတွက် scaffold
+│   └── project/         repo တစ်ခုအတွက် scaffold
 ├── scripts/
+│   ├── new-product.sh   product folder + PRODUCT.md
 │   ├── new-project.sh   clone + scaffold
 │   └── pint-hook.sh     PostToolUse formatter
 ├── docs/            project ကြား ဆိုင်တဲ့ doc, runbook
 └── projects/        ← repo တွေ ဒီထဲ clone (git ignore)
 ```
 
-## Repo အသစ် ထည့်တာ
+## Repo တစ်ခုတည်း ထည့်တာ
 
 ```bash
 ~/workspace/scripts/new-project.sh git@github.com:org/repo.git
 cd ~/workspace/projects/repo
 claude          # ပြီးရင်  /project-setup
 ```
+
+## Repo အများကြီးပါတဲ့ product ထည့်တာ
+
+```bash
+~/workspace/scripts/new-product.sh pos \
+  git@github.com:org/pos-api.git \
+  git@github.com:org/pos-gateway.git \
+  git@github.com:org/pos-web.git
+
+cd ~/workspace/projects/pos
+# PRODUCT.md ရဲ့ repo table + boundary ဖြည့်
+claude                      # ← root ကနေ run ရင် repo အကုန် မြင်တယ် (cross-repo အလုပ်)
+cd pos-api && claude        # ← repo တစ်ခုတည်း အလုပ်လုပ်ရင်
+```
+
+Naming convention အတိအကျ → [CLAUDE.md](CLAUDE.md) ရဲ့ `## Naming` အပိုင်း။
 
 ## Herd
 

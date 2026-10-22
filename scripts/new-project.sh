@@ -1,20 +1,37 @@
 #!/usr/bin/env bash
 # Repo အသစ် clone လုပ်ပြီး Claude scaffold တပ်ပေးတယ်။
 #   ./scripts/new-project.sh git@github.com:org/repo.git [folder-name]
+# Product အောက်ထဲ clone ချင်ရင်:
+#   ./scripts/new-project.sh --product pos git@github.com:org/pos-api.git
 # clone မလုပ်ဘဲ ရှိပြီးသား folder ကို scaffold တပ်ချင်ရင်:
 #   ./scripts/new-project.sh --existing projects/repo
 set -euo pipefail
+product=""
 
 W="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 T="$W/templates/project"
 
+parent="$W/projects"
+if [ "${1:-}" = "--product" ]; then
+  product="${2:?product နာမည် လိုအပ်တယ်}"
+  parent="$W/projects/$product"
+  [ -d "$parent" ] || { echo "✗ product '$product' မရှိဘူး — အရင် scripts/new-product.sh $product run ပါ"; exit 1; }
+  shift 2
+fi
+
 if [ "${1:-}" = "--existing" ]; then
   dest="$(cd "${2:?folder လိုအပ်တယ်}" && pwd)"
   name="$(basename "$dest")"
+  # product folder အောက်မှာဆိုရင် parent နာမည်ကို product အဖြစ် သတ်မှတ်
+  gp="$(basename "$(dirname "$dest")")"
+  [ "$gp" != "projects" ] && [ -f "$(dirname "$dest")/PRODUCT.md" ] && product="$gp"
 else
   url="${1:?git URL လိုအပ်တယ်}"
   name="${2:-$(basename "$url" .git)}"
-  dest="$W/projects/$name"
+  case "$name" in
+    *[A-Z]*|*_*|*" "*) echo "⚠ '$name' — lowercase + hyphen က convention ပါ (ဥပမာ: ${name}-api)"; ;;
+  esac
+  dest="$parent/$name"
   [ -e "$dest" ] && { echo "✗ $dest ရှိပြီးသား"; exit 1; }
   git clone "$url" "$dest"
 fi
@@ -50,7 +67,8 @@ fi
 
 # PROJECTS.md index မှာ တစ်လိုင်းထည့်
 if ! grep -q "| $name |" "$W/PROJECTS.md" 2>/dev/null; then
-  printf '| %s | | active | https://%s.test | |\n' "$name" "$name" >> "$W/PROJECTS.md"
+  prod_label="${product:-—}"
+  printf '| %s | %s | | active | https://%s.test | |\n' "$prod_label" "$name" "$name" >> "$W/PROJECTS.md"
   echo "✓ PROJECTS.md မှာ ထည့်ပြီး"
 fi
 

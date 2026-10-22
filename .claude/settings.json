@@ -1,0 +1,57 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git show:*)",
+      "Bash(git branch:*)",
+      "Bash(git stash list:*)",
+      "Bash(git remote -v)",
+      "Bash(php artisan about:*)",
+      "Bash(php artisan route:list:*)",
+      "Bash(php artisan config:show:*)",
+      "Bash(php artisan migrate:status:*)",
+      "Bash(php artisan db:show:*)",
+      "Bash(php artisan db:table:*)",
+      "Bash(php -v)",
+      "Bash(composer show:*)",
+      "Bash(composer validate:*)",
+      "Bash(composer test:*)",
+      "Bash(./vendor/bin/pint:*)",
+      "Bash(./vendor/bin/pest:*)",
+      "Bash(npm run build:*)",
+      "Bash(npm run lint:*)"
+    ],
+    "deny": [
+      "Read(**/.env)",
+      "Edit(**/.env)",
+      "Write(**/.env)",
+      "Read(**/.env.production)",
+      "Edit(**/.env.production)",
+      "Write(**/.env.production)",
+      "Bash(php artisan migrate:fresh:*)",
+      "Bash(php artisan db:wipe:*)",
+      "Bash(git push --force:*)"
+    ],
+    "ask": [
+      "Read(**/.env.testing)",
+      "Read(**/.env.local)",
+      "Edit(**/.env.example)",
+      "Write(**/.env.example)"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/azp/workspace/scripts/pint-hook.sh"
+          }
+        ]
+      }
+    ]
+  }
+}

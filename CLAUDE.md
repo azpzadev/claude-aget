@@ -1,0 +1,54 @@
+# CLAUDE.md — workspace house style
+
+ဒီဖိုင်က `~/workspace/projects/` အောက်ရှိ project **အကုန်လုံး** အတွက် သက်ဝင်တယ်။
+Project သီးသန့်အချက်တွေကို သူ့ repo ရဲ့ `CLAUDE.md` မှာ ရေးပါ — ဒီဖိုင်မှာ မထည့်ပါနဲ့။
+
+## Layering (ဒီ ၃ ခု ပေါင်းပြီး load ဖြစ်တယ်)
+
+| လွှာ | ဖိုင် | အကြောင်းအရာ |
+|---|---|---|
+| Global | `~/.claude/CLAUDE.md` | ကိုယ်ရေး၊ ဘာသာစကား၊ reply style |
+| Fleet | `~/workspace/CLAUDE.md` (ဒီဖိုင်) | stack default, convention, တားမြစ်ချက် |
+| Project | `projects/<name>/CLAUDE.md` | stack အတိအကျ၊ DB၊ command၊ module |
+
+တူတဲ့အချက်ကို ၂ နေရာ မရေးပါနဲ့။ Project ဖိုင်မှာ **ဒီ default နဲ့ ကွဲတဲ့အချက်ပဲ** ရေးပါ။
+
+## Default stack (ကွဲရင် project CLAUDE.md မှာ ရေးပြပါ)
+
+- **Backend** — Laravel 13 / PHP 8.3+, slim `bootstrap/app.php` style (legacy `Http/Kernel.php` မသုံး)
+- **DB** — PostgreSQL
+- **Test** — Pest 4 (PHPUnit underneath), `composer test`
+- **Format** — Laravel Pint (`./vendor/bin/pint`), PSR-12 + Laravel preset
+- **Frontend** — Vite + Tailwind 4; သီးသန့် SPA ဖြစ်ရင် Nuxt
+- **Mobile** — Flutter
+- **Commit** — Conventional Commits (`feat:`, `fix:`, `chore:` …), Husky + commitlint ရှိရင် သူ့ gate ကို ဖြေမယ်မလုပ်ရ
+
+## Conventions
+
+- ရှိပြီးသား code convention ကို အတိအကျ လိုက်ပါ။ ဖိုင်အသစ်လုပ်တိုင်း **sibling ဖိုင်ကို အရင်ဖတ်ပြီး** structure, naming, approach ကို တူအောင်လုပ်ပါ။
+- Variable/method နာမည် ဖော်ပြတဲ့ပုံစံ သုံးပါ — `isRegisteredForDiscounts`, `discount()` မဟုတ်။
+- Component/service အသစ်မလုပ်ခင် ရှိပြီးသား ပြန်သုံးလို့ရမရ အရင်ရှာပါ။
+- Directory structure အသစ် (base folder အသစ်) ကို အတည်မပြုဘဲ မလုပ်ပါနဲ့။
+- Dependency အသစ်ထည့်/ဖျက်တာ အတည်မပြုဘဲ မလုပ်ပါနဲ့။
+- Verification script တွေ မရေးပါနဲ့ — feature/unit test က အတည်ပြုတဲ့အတွက် ပိုအရေးကြီးတယ်။
+- Migration ရေးရင် `down()` အမြဲထည့်ပါ။ Production table ပေါ် `change()` မသုံးပါနဲ့ — column အသစ်ထည့်ပြီး backfill လုပ်ပါ။
+
+## အမြဲတားမြစ်
+
+- `.env` ဖိုင် မပြင်ရ၊ မဖတ်ပြရ (value တွေ မ echo ရ)။ `.env.example` ပဲ ထိရမယ်။
+- `php artisan migrate:fresh` / `db:wipe` ကို production/staging connection ပေါ် ဘယ်တော့မှ မ run ရ။
+- Secret, token, DSN တွေ commit မလုပ်ရ။
+- `git push --force`, branch ဖျက်တာ — ခွင့်ပြုချက် မရဘဲ မလုပ်ရ။
+- Dependency version pin တွေ ကိုယ်ထင်သလို မတင်ရ/မချရ။
+
+## Workflow
+
+1. ပြင်ခင် သက်ဆိုင်ရာဖိုင်တွေ အရင်ဖတ်ပါ — ခွင့်မတောင်းဘဲ ဖတ်လို့ရတယ်။
+2. အကြီးစား feature ဖြစ်ရင် `/laravel-feature`, bug ဖြစ်ရင် `/laravel-fix` သုံးပါ။
+3. ပြင်ပြီးရင် `./vendor/bin/pint --dirty` + `composer test` run ပါ။
+4. Test ကျရင် ဖုံးမထားပါနဲ့ — output အတိုင်း ပြောပြပါ။
+
+## Docs
+
+- Project ရဲ့ architecture/decision/runbook တွေ သူ့ `docs/` အောက်။ `~/workspace/docs/` က project ကြား ဆိုင်တဲ့ အကြောင်းအရာအတွက်။
+- အကြောင်းအရာရှည်ရင် CLAUDE.md မှာ မရေးဘဲ `docs/` ထဲထည့်ပြီး ဒီကနေ link ပေးပါ။ CLAUDE.md က session တိုင်း load ဖြစ်တာမို့ တိုရမယ်။

@@ -1,0 +1,4 @@
+# project repo တွေ သူ့ git သူ့ဟာ — ဒီ repo က config/doc ပဲ track တယ်
+projects/
+.claude/settings.local.json
+.DS_Store

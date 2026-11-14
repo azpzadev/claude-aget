@@ -48,7 +48,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "/Users/azp/workspace/scripts/pint-hook.sh"
+            "command": "$HOME/workspace/scripts/pint-hook.sh"
           }
         ]
       }

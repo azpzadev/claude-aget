@@ -52,3 +52,14 @@ Naming convention အတိအကျ → [CLAUDE.md](CLAUDE.md) ရဲ့ `## Na
 ```bash
 cd ~/workspace/projects && herd park
 ```
+
+## တခြားစက် (VM) ပေါ် setup
+
+```bash
+git clone git@github.com:aungzawpyae/claude-agent.git ~/workspace
+mkdir -p ~/.claude && cp -r ~/workspace/claude/agents ~/workspace/claude/commands ~/workspace/claude/CLAUDE.md ~/.claude/
+```
+
+Update: `cd ~/workspace && git pull` ပြီးရင် အပေါ်က `cp` ကို ပြန် run ပါ (`laravel-*` နဲ့ agent တွေ overwrite ဖြစ်မယ်)။
+`claude/` ထဲက ဖိုင်တွေက `~/.claude/` ရဲ့ copy — Mac မှာ ပြင်ရင် ဒီထဲ ပြန်ကူးပြီး commit လုပ်ပါ။
+`PROJECTS.md` က template ပဲ track တယ် — စက်တစ်ခုချင်းရဲ့ project list ကို commit မလုပ်ပါနဲ့။
